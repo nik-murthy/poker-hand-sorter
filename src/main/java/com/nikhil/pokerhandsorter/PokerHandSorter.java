@@ -1,20 +1,26 @@
 package com.nikhil.pokerhandsorter;
 
 import java.io.*;
-import java.util.Scanner;
 
 public class PokerHandSorter {
 	
 	public static void main (String[] args) {
 		
-//		try {
-//			BufferedReader pokerHandsReader = new BufferedReader(new InputStreamReader(System.in));
-//		} catch (Exception exp) {
-//			System.out.println(exp.getMessage());
-//		}
-		 
+		DetermineHandWinner getHandWinner = new DetermineHandWinner();
+		String winnerOfCurrentHand, individualHand;
 		
-		System.out.println("here");
+		try {
+			BufferedReader pokerHandsReader = new BufferedReader(new InputStreamReader(System.in));
+			
+			while ((individualHand = pokerHandsReader.readLine()) != null) {
+				System.out.println("Current Hand - " + individualHand);
+				winnerOfCurrentHand = getHandWinner.getWinnerOfCurrentHand(individualHand);
+				
+			}
+
+		} catch (Exception exp) {
+			System.out.println(exp.getMessage());
+		}
 	}
 
 }

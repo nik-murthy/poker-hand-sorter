@@ -26,7 +26,7 @@ public class DetermineHandWinner {
 		
 		//Evaluate Winner
 		if (player1Rank.getRank() > player2Rank.getRank()) {
-			System.out.println("Win: Player 1 rank higher - " + player1Rank.getRank() + " " + player2Rank.getRank());
+			//System.out.println("Win: Player 1 rank higher - " + player1Rank.getRank() + " " + player2Rank.getRank());
 			return PLAYER_1_WINS;
 		} else if (player1Rank.getRank() == player2Rank.getRank()) {
 			int commonRank = player1Rank.getRank();
@@ -36,17 +36,22 @@ public class DetermineHandWinner {
 					|| commonRank == FLUSH_RANK
 					|| commonRank == STRAIGHT_FLUSH_RANK) {
 				if(player1Rank.getHighCard() > player2Rank.getHighCard()) {
-					System.out.println("Player 1 Wins by high card");
+					//System.out.println("Player 1 Wins by high card");
 					return PLAYER_1_WINS;
 				}
 				//If high cards are same then loop through to find the next highest
 				if(commonRank == HIGH_CARD_RANK && player1Rank.getHighCard() 
 						== player2Rank.getHighCard()) {
 					for (int card = 1; card < player1Rank.getSortedCards().size(); card++) {
+						//System.out.println("P1 - " + player1Rank.getSortedCards().get(card));
+						//System.out.println("P2 - " + player2Rank.getSortedCards().get(card));
 						if(player1Rank.getSortedCards().get(card) 
 								> player2Rank.getSortedCards().get(card)) {
-							System.out.println("Player 1 Wins by high card (secondary)");
+							//System.out.println("Player 1 Wins by high card (secondary)");
 							return PLAYER_1_WINS;
+						} else if(player1Rank.getSortedCards().get(card) 
+								< player2Rank.getSortedCards().get(card)){
+							return PLAYER_2_WINS;
 						}
 					}
 				}
@@ -58,14 +63,26 @@ public class DetermineHandWinner {
 					|| commonRank ==  TWO_PAIR_RANK
 					|| commonRank == FULL_HOUSE_RANK) {
 				if(player1Rank.getHighestGroupCard() > player2Rank.getHighestGroupCard()) {
-					System.out.println("Player 1 Wins by highest grouped card");
+					//System.out.println("Player 1 Wins by highest grouped card");
 					return PLAYER_1_WINS;
 				}
+				//If pairs are the same, then check the next highest card
 				if(player1Rank.getHighestGroupCard() 
 						== player2Rank.getHighestGroupCard()) {
+					
+					//Special check only for two pair to determine higher second pair
+					if(commonRank ==  TWO_PAIR_RANK) {
+						if(player1Rank.getHighestSecondGroupCard() 
+								> player2Rank.getHighestSecondGroupCard()) {
+							return PLAYER_1_WINS;
+						} else {
+							return PLAYER_2_WINS;
+						}
+					}
+					
 					if(player1Rank.getHighestNonGroupCard() 
 							> player2Rank.getHighestNonGroupCard()) {
-						System.out.println("Player 1 Wins by highest non-grouped card");
+						//System.out.println("Player 1 Wins by highest non-grouped card");
 						return PLAYER_1_WINS;
 					}					
 				}				
@@ -163,6 +180,8 @@ public class DetermineHandWinner {
 			} else {
 				playerRank.setRank(TWO_PAIR_RANK);
 				determineHighCards(cardNumberMap, playerRank, 2);
+				//This logic only required for 2 pairs to determine the second highest pair
+				playerRank.setHighestSecondGroupCard(cardNumber.get(cardNumber.size() - 2));
 			}					
 		} else if (distinctCardCount == 2) {
 			//four of a kind or full house found
@@ -182,6 +201,7 @@ public class DetermineHandWinner {
 				
 		int highestNonGroupCard = 0;
 		int highestGroupCard = 0;
+		int highestSecondGroupCard = 0;
 		for(Integer highCard : cardNumberMap.keySet()) {
 			if (cardNumberMap.get(highCard) == cardCount && highCard > highestGroupCard) {
 				highestGroupCard = highCard;

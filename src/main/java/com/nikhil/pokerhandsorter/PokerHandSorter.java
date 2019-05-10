@@ -17,14 +17,16 @@ public class PokerHandSorter {
 				
 				if(getHandWinner.getWinnerOfCurrentHand(individualHand).equals(PLAYER_1_WINS)){
 					player1Wins++;
-				} else {
+				} else if (getHandWinner.getWinnerOfCurrentHand(individualHand).equals(PLAYER_2_WINS)) {
 					player2Wins++;
-				}				
+				} else if(getHandWinner.getWinnerOfCurrentHand(individualHand).equals(INCORRECT_HAND_SIZE_MESSAGE)) {
+					System.out.println(INCORRECT_HAND_SIZE_MESSAGE);
+				}
 			}
 			System.out.println("Player 1 Wins - " + player1Wins);
 			System.out.println("Player 2 Wins - " + player2Wins);
-		} catch (Exception exp) {
-			System.out.println(exp.getMessage());
+		} catch (IOException exp) {
+			System.out.println(FILE_IO_ERROR_MESSAGE);
 		}
 	}
 }

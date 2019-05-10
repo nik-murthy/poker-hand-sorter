@@ -16,9 +16,13 @@ public class DetermineHandWinner {
 	public String getWinnerOfCurrentHand(String currentHand) {
 		//System.out.println("From New Class");
 		
-		//Determine individual player hands		
-		String[] player1Hand = Arrays.copyOfRange(currentHand.split(" "), 0, 5);
-		String[] player2Hand = Arrays.copyOfRange(currentHand.split(" "), 5, 10);
+		//Determine individual player hands	
+		String[] currentHandAsArray = currentHand.split(" ");
+		if(currentHandAsArray.length != 10) {
+			return INCORRECT_HAND_SIZE_MESSAGE;
+		}
+		String[] player1Hand = Arrays.copyOfRange(currentHandAsArray, 0, 5);
+		String[] player2Hand = Arrays.copyOfRange(currentHandAsArray, 5, 10);
 		
 		//Determine individual player ranks
 		PlayerRank player1Rank = getPlayerRank(player1Hand);
@@ -26,7 +30,6 @@ public class DetermineHandWinner {
 		
 		//Evaluate Winner
 		if (player1Rank.getRank() > player2Rank.getRank()) {
-			//System.out.println("Win: Player 1 rank higher - " + player1Rank.getRank() + " " + player2Rank.getRank());
 			return PLAYER_1_WINS;
 		} else if (player1Rank.getRank() == player2Rank.getRank()) {
 			int commonRank = player1Rank.getRank();
@@ -36,18 +39,14 @@ public class DetermineHandWinner {
 					|| commonRank == FLUSH_RANK
 					|| commonRank == STRAIGHT_FLUSH_RANK) {
 				if(player1Rank.getHighCard() > player2Rank.getHighCard()) {
-					//System.out.println("Player 1 Wins by high card");
 					return PLAYER_1_WINS;
 				}
 				//If high cards are same then loop through to find the next highest
 				if(commonRank == HIGH_CARD_RANK && player1Rank.getHighCard() 
 						== player2Rank.getHighCard()) {
 					for (int card = 1; card < player1Rank.getSortedCards().size(); card++) {
-						//System.out.println("P1 - " + player1Rank.getSortedCards().get(card));
-						//System.out.println("P2 - " + player2Rank.getSortedCards().get(card));
 						if(player1Rank.getSortedCards().get(card) 
 								> player2Rank.getSortedCards().get(card)) {
-							//System.out.println("Player 1 Wins by high card (secondary)");
 							return PLAYER_1_WINS;
 						} else if(player1Rank.getSortedCards().get(card) 
 								< player2Rank.getSortedCards().get(card)){
@@ -63,14 +62,12 @@ public class DetermineHandWinner {
 					|| commonRank ==  TWO_PAIR_RANK
 					|| commonRank == FULL_HOUSE_RANK) {
 				if(player1Rank.getHighestGroupCard() > player2Rank.getHighestGroupCard()) {
-					//System.out.println("Player 1 Wins by highest grouped card");
 					return PLAYER_1_WINS;
 				}
-				//If pairs are the same, then check the next highest card
 				if(player1Rank.getHighestGroupCard() 
 						== player2Rank.getHighestGroupCard()) {
 					
-					//Special check only for two pair to determine higher second pair
+					//This check is only for two pair to determine higher second pair
 					if(commonRank ==  TWO_PAIR_RANK) {
 						if(player1Rank.getHighestSecondGroupCard() 
 								> player2Rank.getHighestSecondGroupCard()) {
@@ -79,10 +76,10 @@ public class DetermineHandWinner {
 							return PLAYER_2_WINS;
 						}
 					}
-					
+					//If groups of cards from both players have same value 
+					//then choose winner as player with highest card outside group
 					if(player1Rank.getHighestNonGroupCard() 
 							> player2Rank.getHighestNonGroupCard()) {
-						//System.out.println("Player 1 Wins by highest non-grouped card");
 						return PLAYER_1_WINS;
 					}					
 				}				
@@ -91,6 +88,9 @@ public class DetermineHandWinner {
 		return PLAYER_2_WINS;
 	}
 	
+	//This function is used to populate the PlayerRank object
+	//which contains fields regarding the current player's hand 
+	//that will be later used to determine the winner. 
 	private PlayerRank getPlayerRank(String[] playerHand) {
 		
 		//Separate player card number and suit
@@ -118,7 +118,7 @@ public class DetermineHandWinner {
 						String.valueOf(cardNumberValue)));
 			}			
 			cardSuit.add(String.valueOf(
-					currentCard.charAt(1)));			
+					currentCard.charAt(1)).toUpperCase());			
 		}
 		
 		
@@ -138,10 +138,11 @@ public class DetermineHandWinner {
 				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 		
 		if(distinctCardCount == 5) {
-			//Check for consecutive cards
-			//Set high card			
+			//Set high card as it is easier to use to 
+			//determine winner when all cards are distinct
 			playerRank.setHighCard(cardNumber.get(0));
 			playerRank.setSortedCards(cardNumber);
+			//Check for consecutive cards
 			playerRank.setConsecutive(true);
 			for (int index = cardNumber.size() - 1; index > 0; index--) {
 				//System.out.println(cardNumber.get(index) - cardNumber.get(index - 1));
@@ -197,11 +198,17 @@ public class DetermineHandWinner {
 		return playerRank;		
 	}
 	
+	//This method is used to find the highest card groups and highest card outside group for
+	//1. one pair
+	//2. two pair
+	//3. three of a kind
+	//4. four of a kind
+	//5. full house
+	//This information is used to determine the winner during a tie between player's card ranks
 	private void determineHighCards(Map<Integer, Long> cardNumberMap, PlayerRank playerRank, int cardCount) {
 				
 		int highestNonGroupCard = 0;
 		int highestGroupCard = 0;
-		int highestSecondGroupCard = 0;
 		for(Integer highCard : cardNumberMap.keySet()) {
 			if (cardNumberMap.get(highCard) == cardCount && highCard > highestGroupCard) {
 				highestGroupCard = highCard;

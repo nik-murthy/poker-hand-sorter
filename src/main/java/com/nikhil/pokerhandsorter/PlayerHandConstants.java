@@ -31,4 +31,8 @@ public class PlayerHandConstants {
 	//Winners
 	public static final String PLAYER_1_WINS = "P1";
 	public static final String PLAYER_2_WINS = "P2";
+	
+	//Error Messages
+	public static final String INCORRECT_HAND_SIZE_MESSAGE = "Incorrect number of cards in current hand.";
+	public static final String FILE_IO_ERROR_MESSAGE = "Error occured while working with poker hands file.";
 }

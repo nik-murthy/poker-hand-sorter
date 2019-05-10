@@ -2,6 +2,10 @@
 ###########
 target/
 
+# Files #
+#########
+ .DS_Store
+
 # Compiled source #
 ###################
 *.com

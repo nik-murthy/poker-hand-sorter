@@ -1,5 +1,6 @@
 # poker-hand-sorter
 Repo for poker hand sorter test
+Prerequisites: Java & Maven
 
 1. Clone repo into a folder of your choice.
 

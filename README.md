@@ -1,5 +1,7 @@
 # poker-hand-sorter
-Repo for poker hand sorter test
+This project contains a collection of poker hands (poker-hands.txt) in a game between two players. The program determines the number of wins for each player in the collection of poker hands. 
+
+There are test cases capturing different hands and which player should win in each case. The code makes use of constants and comments to make the code highly readable and easy to understand. 
 
 Prerequisites: Java & Maven
 
